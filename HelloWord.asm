@@ -29,18 +29,22 @@ BDRCLR:	equ 0F3EBh
 
 ; initialize and print message
 start:
-	ld a, 2
+	ld a, 8
+        ld b, 1
+        ld c, 1
+        call Colors
+        
+        ld a, 2
         call Screen
 
-	ld a, 15
-        ld b, 2
-        ld c, 1
-        call colors
      
-	ld b, 10
+	ld b, 15
 mainloop:
+	ld a,b
+        call Color
 	ld hl, msg
     	call gputs
+        CALL	$9F
     	djnz mainloop
 stop:   jr stop; loop forever
 
@@ -50,13 +54,13 @@ msg:    defm "Hello, world!",13,10,0
 
 ; SUBS
 
-puts:			; print 0-terminated string in HL
+Puts:			; print 0-terminated string in HL
     ld a,(hl)
     or a
     ret z
     call CHPUT      ; displays one character in A
     inc hl
-    jr puts
+    jr Puts
     
 ; Подпрограмма установки любого режима VDP
 ; вход: А <- номер режима
@@ -71,13 +75,13 @@ Screen:	ld	(0FCAFh),a	; поместить в SCRMOD
 MAINRM:	ld	iy,(0FCC0h)	; номер слота MAIN-ROM
 	jp	001Ch
     
-gputs:			; print 0-terminated string in HL
+GPuts:			; print 0-terminated string in HL
     ld a,(hl)
     or a
     ret z
     call GRPUT      ; displays one character in A
     inc hl
-    jr gputs
+    jr GPuts
 
 
 PrintXY: 		; HL -> msg, BC - X, DE - Y
@@ -85,16 +89,16 @@ PrintXY: 		; HL -> msg, BC - X, DE - Y
     ld (XCRD2), BC
     ld (YCRD1), DE
     ld (YCRD2), DE
-    jr gputs
+    jr GPuts
     
 
 
-colors: 		;set colors from A,B,C
+Colors: 		;set colors from A,B,C
         ld hl,BAKCLR		; Loads BAKCLR sys variable in HL
         ld (hl),B		; Loads the value from B into the position pointed by HL
         ld hl,BDRCLR		; Loads BDCLR sys variable in HL
         ld (hl),C		; Loads the value from C into the position pointed by HL
-color: 			;set color from A
+Color: 			;set color from A
 	ld hl,FORCLR		; Loads FORCLR sys variable in HL
         ld (hl),A		; Loads the value from A into the position pointed by HL
         ret
