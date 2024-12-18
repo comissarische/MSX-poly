@@ -37,3 +37,11 @@
       (F56Fh) - обнулить (1 байт)
       (F570h) - логическая операция (1 байт)
       HL - F562h
+      
+      
+DPPAGE (FAF5H, 1)
+  contents:	display page number
+
+
+ACPAGE (FAF6H, 1)
+  contents:	active page number
